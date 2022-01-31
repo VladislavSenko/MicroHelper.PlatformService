@@ -1,5 +1,11 @@
+using System;
+using System.Threading.Tasks;
+using MicroHelper.PlatformService.Infrastructure.Data;
+using MicroHelper.PlatformService.Infrastructure.Repositories.Implementations;
+using MicroHelper.PlatformService.Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,9 +22,16 @@ namespace MicroHelper.PlatformService
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseInMemoryDatabase("InMem");
+            });
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddScoped<IPlatformRepository, PlatformRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -26,8 +39,7 @@ namespace MicroHelper.PlatformService
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MicroHelper.PlatformService", Version = "v1" });
             });
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -46,6 +58,11 @@ namespace MicroHelper.PlatformService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            Task.Run(async () =>
+            {
+                await app.SeedAsync();
             });
         }
     }
