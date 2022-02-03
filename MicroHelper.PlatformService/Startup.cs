@@ -1,14 +1,19 @@
 using System;
 using System.Threading.Tasks;
+using MicroHelper.PlatformService.Configuration;
+using MicroHelper.PlatformService.Constants;
 using MicroHelper.PlatformService.Infrastructure.Data;
 using MicroHelper.PlatformService.Infrastructure.Repositories.Implementations;
 using MicroHelper.PlatformService.Infrastructure.Repositories.Interfaces;
+using MicroHelper.PlatformService.Services.Implementation;
+using MicroHelper.PlatformService.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace MicroHelper.PlatformService
@@ -27,10 +32,15 @@ namespace MicroHelper.PlatformService
             services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseInMemoryDatabase("InMem");
+                options.UseLoggerFactory(SqlLoggerFactory);
             });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            services.AddHttpClient<ICommandHttpClient, CommandHttpClient>(); 
+
+            services.AddSingleton<IAppConfiguration, AppConfiguration>();
+            
             services.AddScoped<IPlatformRepository, PlatformRepository>();
 
             services.AddControllers();
@@ -38,6 +48,8 @@ namespace MicroHelper.PlatformService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MicroHelper.PlatformService", Version = "v1" });
             });
+
+            Console.WriteLine($"{DateTime.Now} => commands service url: {Configuration.GetValue<string>(AppSettingConstants.CommandsServiceBaseUrl)}");
         }
         
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -60,5 +72,10 @@ namespace MicroHelper.PlatformService
                 await app.SeedAsync();
             });
         }
+
+        public static readonly ILoggerFactory SqlLoggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder.AddConsole();
+        });
     }
 }
