@@ -1,8 +1,14 @@
+using System;
+using MicroHelper.CommandsService.Infrastructure.Data;
+using MicroHelper.CommandsService.Infrastructure.Repositories.Implementation;
+using MicroHelper.CommandsService.Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace MicroHelper.CommandsService
@@ -18,8 +24,11 @@ namespace MicroHelper.CommandsService
 
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMem"));
+            services.AddScoped<ICommandRepository, CommandRepository>();
+            services.AddScoped<IPlatformRepository, PlatformRepository>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MicroHelper.CommandsService", Version = "v1" });
@@ -46,5 +55,10 @@ namespace MicroHelper.CommandsService
                 endpoints.MapControllers();
             });
         }
+
+        public static readonly ILoggerFactory SqlLoggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder.AddConsole();
+        });
     }
 }

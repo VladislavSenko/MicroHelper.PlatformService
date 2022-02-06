@@ -10,9 +10,9 @@ using MicroHelper.PlatformService.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
@@ -20,21 +20,34 @@ namespace MicroHelper.PlatformService
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public IConfiguration Configuration { get; }
+        private readonly IWebHostEnvironment _hostEnvironment;
+        public Startup(IConfiguration configuration,
+            IWebHostEnvironment hostEnvironment)
         {
             Configuration = configuration;
+            _hostEnvironment = hostEnvironment;
         }
-
-        public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>(options =>
+            if (_hostEnvironment.IsProduction())
             {
-                options.UseInMemoryDatabase("InMem");
-                options.UseLoggerFactory(SqlLoggerFactory);
-            });
-
+                services.AddDbContext<AppDbContext>(options =>
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString(AppSettingConstants.ConnectionStringSettingName));
+                    options.UseLoggerFactory(SqlLoggerFactory);
+                });
+            }
+            else
+            {
+                services.AddDbContext<AppDbContext>(options =>
+                {
+                    options.UseInMemoryDatabase("InMem");
+                    options.UseLoggerFactory(SqlLoggerFactory);
+                });
+            }
+            
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddHttpClient<ICommandHttpClient, CommandHttpClient>(); 
@@ -51,7 +64,7 @@ namespace MicroHelper.PlatformService
 
             Console.WriteLine($"{DateTime.Now} => commands service url: {Configuration.GetValue<string>(AppSettingConstants.CommandsServiceBaseUrl)}");
         }
-        
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseDeveloperExceptionPage();
@@ -69,7 +82,7 @@ namespace MicroHelper.PlatformService
 
             Task.Run(async () =>
             {
-                await app.SeedAsync();
+                await app.SeedAsync(_hostEnvironment.IsProduction());
             });
         }
 

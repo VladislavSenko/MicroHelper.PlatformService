@@ -4,13 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using MicroHelper.PlatformService.Infrastructure.Models;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MicroHelper.PlatformService.Infrastructure.Data
 {
     public static class DbSeeding
     {
-        public static async Task SeedAsync(this IApplicationBuilder app)
+        public static async Task SeedAsync(this IApplicationBuilder app, bool isProductionEnv)
         {
             using var scopeService = app.ApplicationServices.CreateScope();
             var dbContext = scopeService.ServiceProvider.GetService<AppDbContext>();
@@ -18,6 +20,19 @@ namespace MicroHelper.PlatformService.Infrastructure.Data
             if (dbContext == null)
             {
                 throw new ArgumentNullException(nameof(dbContext));
+            }
+
+            if (isProductionEnv)
+            {
+                try
+                {
+                    await dbContext.Database.MigrateAsync();
+                    Console.WriteLine("Migration is applied");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"{DateTime.Now} => something wrong with migration: {e.Message}");
+                }
             }
 
             await InsertTempDataAsync(dbContext);
@@ -31,7 +46,7 @@ namespace MicroHelper.PlatformService.Infrastructure.Data
             }
             else
             {
-                await dbContext.AddRangeAsync(new List<Platform>
+                await dbContext.Platforms.AddRangeAsync(new List<Platform>
                 {
                     new()
                     {
