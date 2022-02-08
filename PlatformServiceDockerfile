@@ -1,17 +1,21 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
-
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
-
 EXPOSE 80
 EXPOSE 443
 
-COPY "MicroHelper.PlatformService/MicroHelper.PlatformService.csproj" ./
-RUN dotnet restore 
-COPY . ./
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+WORKDIR /src
+COPY ["MicroHelper.PlatformService/MicroHelper.PlatformService.csproj", "MicroHelper.PlatformService/"]
+COPY ["MicroHelper.Common/MicroHelper.Common.csproj", "MicroHelper.Common/"]
+RUN dotnet restore "MicroHelper.PlatformService/MicroHelper.PlatformService.csproj"
+COPY . .
+WORKDIR "/src/MicroHelper.PlatformService"
+RUN dotnet build "MicroHelper.PlatformService.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish "MicroHelper.PlatformService.csproj" -c Release -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 
+FROM base AS final
+WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "MicroHelper.PlatformService.dll"]

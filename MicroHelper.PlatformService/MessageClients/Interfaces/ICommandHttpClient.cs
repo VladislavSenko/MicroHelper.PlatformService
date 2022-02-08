@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using MicroHelper.PlatformService.Dtos;
 
-namespace MicroHelper.PlatformService.Services.Interfaces
+namespace MicroHelper.PlatformService.MessageClients.Interfaces
 {
     public interface ICommandHttpClient
     {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -8,9 +7,9 @@ using MicroHelper.PlatformService.Configuration;
 using MicroHelper.PlatformService.Constants;
 using MicroHelper.PlatformService.Dtos;
 using MicroHelper.PlatformService.Helpers;
-using MicroHelper.PlatformService.Services.Interfaces;
+using MicroHelper.PlatformService.MessageClients.Interfaces;
 
-namespace MicroHelper.PlatformService.Services.Implementation
+namespace MicroHelper.PlatformService.MessageClients.Implementation
 {
     public class CommandHttpClient : ICommandHttpClient
     {
@@ -27,7 +26,8 @@ namespace MicroHelper.PlatformService.Services.Implementation
         {
             var sendPlatformRequest = new StringContent(JsonSerializer.Serialize(platformReadDto),
                 Encoding.UTF8, AppConstants.JsonContentType);
-            var sendPlatformResponse = await _httpClient.PostAsync(UrlHelper.Combine(_appConfiguration.CommandsServiceBaseUrl, AppConstants.PlatformCreateCommandUrl),
+            var sendPlatformResponse = await _httpClient.PostAsync(UrlHelper.Combine(_appConfiguration.CommandsServiceBaseUrl,
+                    AppConstants.PlatformCreateCommandUrl),
                 sendPlatformRequest, cancellationToken);
 
             if (sendPlatformResponse.IsSuccessStatusCode)

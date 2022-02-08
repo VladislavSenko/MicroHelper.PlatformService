@@ -5,6 +5,8 @@ using MicroHelper.PlatformService.Constants;
 using MicroHelper.PlatformService.Infrastructure.Data;
 using MicroHelper.PlatformService.Infrastructure.Repositories.Implementations;
 using MicroHelper.PlatformService.Infrastructure.Repositories.Interfaces;
+using MicroHelper.PlatformService.MessageClients.Implementation;
+using MicroHelper.PlatformService.MessageClients.Interfaces;
 using MicroHelper.PlatformService.Services.Implementation;
 using MicroHelper.PlatformService.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
@@ -51,10 +53,15 @@ namespace MicroHelper.PlatformService
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddHttpClient<ICommandHttpClient, CommandHttpClient>(); 
+            services.AddHttpClient<IMessageBusClient, MessageBusClient>();
 
+            services.AddSingleton<IMessageBusFactory, MessageBusFactory>();
             services.AddSingleton<IAppConfiguration, AppConfiguration>();
+            services.AddSingleton<IMessageBusClient, MessageBusClient>(); 
             
             services.AddScoped<IPlatformRepository, PlatformRepository>();
+
+            services.AddLogging();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -62,10 +69,12 @@ namespace MicroHelper.PlatformService
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MicroHelper.PlatformService", Version = "v1" });
             });
 
+
+
             Console.WriteLine($"{DateTime.Now} => commands service url: {Configuration.GetValue<string>(AppSettingConstants.CommandsServiceBaseUrl)}");
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();

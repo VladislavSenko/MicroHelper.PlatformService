@@ -2,6 +2,8 @@ using System;
 using MicroHelper.CommandsService.Infrastructure.Data;
 using MicroHelper.CommandsService.Infrastructure.Repositories.Implementation;
 using MicroHelper.CommandsService.Infrastructure.Repositories.Interfaces;
+using MicroHelper.CommandsService.Services.Implementation;
+using MicroHelper.CommandsService.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +31,9 @@ namespace MicroHelper.CommandsService
             services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMem"));
             services.AddScoped<ICommandRepository, CommandRepository>();
             services.AddScoped<IPlatformRepository, PlatformRepository>();
+
+            services.AddSingleton<IMessageBusProcessorService, MessageBusProcessorService>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MicroHelper.CommandsService", Version = "v1" });

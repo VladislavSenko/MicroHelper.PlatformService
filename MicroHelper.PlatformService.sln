@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroHelper.PlatformService
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroHelper.CommandsService", "MicroHelper.CommandsService\MicroHelper.CommandsService.csproj", "{E264774C-0388-4A61-81D3-D3660848FB54}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroHelper.Common", "MicroHelper.Common\MicroHelper.Common.csproj", "{BA2899C3-E721-47DD-969C-B9442F906C96}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{E264774C-0388-4A61-81D3-D3660848FB54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E264774C-0388-4A61-81D3-D3660848FB54}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E264774C-0388-4A61-81D3-D3660848FB54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA2899C3-E721-47DD-969C-B9442F906C96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA2899C3-E721-47DD-969C-B9442F906C96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA2899C3-E721-47DD-969C-B9442F906C96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA2899C3-E721-47DD-969C-B9442F906C96}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
