@@ -1,0 +1,18 @@
+﻿syntax = "proto3";
+option csharp_namespace = "MicroHelper.Common";
+
+service GrpcPlatformService {
+	rpc GetAllPlatformsAsync(GetAllPlatformsRequestModel) returns (GrpcPlatformModels);
+}
+
+message GetAllPlatformsRequestModel {}
+
+message GrpcPlatformModel {
+	int32 platformId = 1;
+	string name = 2;
+	string publisher = 3;
+}
+
+message GrpcPlatformModels {
+	repeated GrpcPlatformModel platforms = 1;
+}

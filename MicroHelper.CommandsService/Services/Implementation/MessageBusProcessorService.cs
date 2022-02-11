@@ -60,6 +60,7 @@ namespace MicroHelper.CommandsService.Services.Implementation
             {
                 await platformRepository.CreatePlatformAsync(platform);
                 await platformRepository.SaveChangesAsync();
+                _logger.LogInformation($"{DateTime.Now} => platform is published with id {platform.Id}");
             }
         }
     }

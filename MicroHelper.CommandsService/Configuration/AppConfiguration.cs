@@ -14,5 +14,6 @@ namespace MicroHelper.CommandsService.Configuration
         public int RabbitMqMessagePort => int.Parse(_configuration.GetValue<string>(AppSettingConstants.RabbitMqMessagePortSettingName));
         public string RabbitMqUrl => _configuration.GetValue<string>(AppSettingConstants.RabbitMqUrlSettingName);
         public string RabbitMqExchangeName => _configuration.GetValue<string>(AppSettingConstants.RabbitMqExchangeSettingName);
+        public string GrpcPlatformServiceUrl => _configuration.GetValue<string>(AppSettingConstants.GrpcPlatformServiceUrl);
     }
 }

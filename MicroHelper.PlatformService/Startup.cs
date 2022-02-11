@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using MicroHelper.PlatformService.Configuration;
 using MicroHelper.PlatformService.Constants;
@@ -11,6 +12,7 @@ using MicroHelper.PlatformService.Services.Implementation;
 using MicroHelper.PlatformService.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -61,6 +63,8 @@ namespace MicroHelper.PlatformService
             
             services.AddScoped<IPlatformRepository, PlatformRepository>();
 
+            services.AddGrpc();
+
             services.AddLogging();
 
             services.AddControllers();
@@ -68,8 +72,6 @@ namespace MicroHelper.PlatformService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MicroHelper.PlatformService", Version = "v1" });
             });
-
-
 
             Console.WriteLine($"{DateTime.Now} => commands service url: {Configuration.GetValue<string>(AppSettingConstants.CommandsServiceBaseUrl)}");
         }
@@ -87,6 +89,11 @@ namespace MicroHelper.PlatformService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGrpcService<GrpcPlatformsService>();
+                endpoints.MapGet("protos/platforms.proto", async context =>
+                {
+                    await context.Response.WriteAsync(await File.ReadAllTextAsync("Protos/platforms.proto"));
+                });
             });
 
             Task.Run(async () =>

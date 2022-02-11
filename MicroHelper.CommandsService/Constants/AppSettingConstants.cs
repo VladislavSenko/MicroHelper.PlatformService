@@ -5,6 +5,7 @@
         public static string RabbitMqMessagePortSettingName = "AppConfig:RabbitMqMessagePort";
         public static string RabbitMqUrlSettingName = "AppConfig:RabbitMqUrl";
         public static string RabbitMqExchangeSettingName = "AppConfig:RabbitMqExchange";
-
+        public static string GrpcPlatformServiceUrl = "AppConfig:GrpcPlatformServiceUrl";
+        
     }
 }

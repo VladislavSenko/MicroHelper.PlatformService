@@ -47,7 +47,7 @@ namespace MicroHelper.PlatformService.Controllers
             return Ok(platformReadDtos);
         }
 
-        [HttpGet("{id}", Name = "GetPlatformById")]
+        [HttpGet("{id}", Name = nameof(GetPlatformById))]
         public async Task<ActionResult<PlatformReadDto>> GetPlatformById(int id)
         {
             var platformModel = await _repository.GetByIdAsync(id);

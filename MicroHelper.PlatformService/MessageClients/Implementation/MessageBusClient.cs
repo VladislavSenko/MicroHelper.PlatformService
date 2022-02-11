@@ -3,9 +3,7 @@ using System.Text;
 using System.Text.Json;
 using MicroHelper.Common.Dtos;
 using MicroHelper.PlatformService.Configuration;
-using MicroHelper.PlatformService.Dtos;
 using MicroHelper.PlatformService.MessageClients.Interfaces;
-using MicroHelper.PlatformService.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
