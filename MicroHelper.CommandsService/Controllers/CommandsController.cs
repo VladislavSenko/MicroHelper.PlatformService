@@ -30,12 +30,6 @@ namespace MicroHelper.CommandsService.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public ActionResult Index()
-        {
-            return Ok("TEST RESULT");
-        }
-
         [HttpGet("{platformId}")]
         public async Task<ActionResult<List<Command>>> GetAllCommandsForPlatform(int platformId)
         {
